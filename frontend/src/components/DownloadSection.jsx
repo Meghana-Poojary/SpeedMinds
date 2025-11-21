@@ -25,7 +25,7 @@ export function DownloadSection({ documentData, qaHistory }) {
         qaHistory: qaHistory.filter(qa => qa.answer !== '...'), // Filter out pending Q&A items
       };
 
-      const response = await fetch("http://localhost:5000/api/download-report", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/download-report`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

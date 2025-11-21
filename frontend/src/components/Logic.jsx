@@ -36,7 +36,7 @@ export default function Logic() {
     formData.append("file", file);
 
     try {
-        const response = await fetch("http://localhost:5000/api/analyze", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/analyze`, {
             method: "POST",
             body: formData,
         });
@@ -87,7 +87,7 @@ export default function Logic() {
     formData.append("question", question);
 
     try {
-        const response = await fetch("http://localhost:5000/api/ask-document", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/ask-document`, {
             method: "POST",
             body: formData,
         });
