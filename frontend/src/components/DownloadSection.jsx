@@ -3,58 +3,64 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Download, FileText, CheckCircle, Loader2 } from 'lucide-react';
 
-export function DownloadSection({ documentData }) {
+// documentData prop now includes summary, topics, documentName, and qaHistory
+export function DownloadSection({ documentData, qaHistory }) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [downloadError, setDownloadError] = useState(null);
+
+  // Helper to ensure data is available before calculating lengths
+  const topicsCount = documentData?.topics?.length || 0;
+  const qaCount = documentData?.qaHistory?.length || 0;
+  const documentName = documentData?.documentName || 'analysis_report';
 
   const handleDownload = async () => {
+    setDownloadError(null);
     setIsGenerating(true);
-    
-    // Simulate PDF generation
-    setTimeout(() => {
-      // In a real app, this would generate and download a PDF
-      const reportContent = generateReportContent(documentData);
+
+    try {
+      const payload = {
+        summary: documentData.summary,
+        topics: documentData.topics,
+        documentName: documentName,
+        qaHistory: qaHistory.filter(qa => qa.answer !== '...'), // Filter out pending Q&A items
+      };
+
+      const response = await fetch("http://localhost:5000/api/download-report", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        // Since the response body might not be JSON on error, we handle it generally
+        const errorText = await response.text();
+        throw new Error(`Server returned status ${response.status}: ${errorText.substring(0, 100)}...`);
+      }
+
+      // 1. Get the PDF blob
+      const blob = await response.blob();
       
-      // Create a text file as a demo (in real app would be PDF)
-      const blob = new Blob([reportContent], { type: 'text/plain' });
+      // 2. Create a temporary URL and trigger download
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${documentData.name.replace(/\.[^/.]+$/, '')}-analysis-report.txt`;
+      // Use the document name from the data to set the filename
+      a.download = `${documentName.replace(/\.[^/.]+$/, '')}-analysis-report.pdf`; 
       document.body.appendChild(a);
       a.click();
+      
+      // 3. Clean up
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
+    } catch (error) {
+      console.error("Download failed:", error);
+      setDownloadError(`Failed to generate report: ${error.message}`);
+    } finally {
       setIsGenerating(false);
-    }, 2000);
-  };
-
-  const generateReportContent = (data) => {
-    let content = `DOCUMENT ANALYSIS REPORT\n`;
-    content += `Generated on: ${new Date().toLocaleDateString()}\n`;
-    content += `Document: ${data.name}\n\n`;
-    
-    content += `SUMMARY\n`;
-    content += `${'-'.repeat(50)}\n`;
-    content += `${data.summary}\n\n`;
-    
-    content += `KEY TOPICS\n`;
-    content += `${'-'.repeat(50)}\n`;
-    data.topics.forEach((topic, index) => {
-      content += `${index + 1}. ${topic}\n`;
-    });
-    content += `\n`;
-    
-    if (data.qaHistory.length > 0) {
-      content += `QUESTIONS & ANSWERS\n`;
-      content += `${'-'.repeat(50)}\n`;
-      data.qaHistory.forEach((qa, index) => {
-        content += `Q${index + 1}: ${qa.question}\n`;
-        content += `A${index + 1}: ${qa.answer}\n\n`;
-      });
     }
-    
-    return content;
   };
 
   return (
@@ -69,6 +75,12 @@ export function DownloadSection({ documentData }) {
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
+        {downloadError && (
+          <div className="text-red-600 bg-red-50 p-3 rounded-lg text-sm">
+            {downloadError}
+          </div>
+        )}
+        
         {/* Report Preview */}
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
@@ -82,11 +94,11 @@ export function DownloadSection({ documentData }) {
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>Key Topics ({documentData.topics.length} identified)</span>
+              <span>Key Topics ({topicsCount} identified)</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>Q&A History ({documentData.qaHistory.length} questions)</span>
+              <span>Q&A History</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
@@ -114,10 +126,6 @@ export function DownloadSection({ documentData }) {
             </>
           )}
         </Button>
-
-        <p className="text-xs text-gray-500 text-center">
-          * This demo generates a text file. In production, this would create a formatted PDF report.
-        </p>
       </CardContent>
     </Card>
   );
