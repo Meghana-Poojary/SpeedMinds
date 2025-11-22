@@ -37,6 +37,7 @@ VITE_API_BASE_URL=your_backend_url
 cd frontend
 npm i
 npm run dev
+```
 
 #### 3. Setup backend
 Configuration: 
@@ -48,5 +49,6 @@ PORT=port_number
 cd backend
 npm i
 node server.js
+```
 
 You are now ready to use SpeedMinds locally!
