@@ -26,11 +26,14 @@ Follow these steps to setup speed minds in your local repository:
 
 #### 1. Clone the repository
 git clone https://github.com/Meghana-Poojary/SpeedMinds.git
+
 cd SpeedMinds
 
 #### 2. Setup frontend
 Configuration: 
+
 Create .env file 
+
 VITE_API_BASE_URL=your_backend_url
 
 ```bash
@@ -41,8 +44,11 @@ npm run dev
 
 #### 3. Setup backend
 Configuration: 
+
 Create .env file 
+
 GOOGLE_API_KEY=your_api_key
+
 PORT=port_number 
 
 ```bash
