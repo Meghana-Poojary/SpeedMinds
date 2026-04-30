@@ -9,7 +9,7 @@ This repository hosts the complete codebase for SpeedMinds, featuring a modern R
 ### ✨ Key Features
 #### 📄 Secure Document Upload: Easily upload PDF or text documents for processing.
 
-#### 🧠 Intelligent Summarization: Generate a concise, high-quality summary of the entire document using the Gemini API.
+#### 🧠 Intelligent Summarization: Generate a concise, high-quality summary of the entire document using the Mistral API.
 
 #### 📌 Topic Extraction: Automatically identify and summarize key topics from the document.
 
@@ -47,7 +47,7 @@ Configuration:
 
 Create .env file 
 
-GOOGLE_API_KEY=your_api_key
+MISTRAL_API_KEY=your_api_key
 
 PORT=port_number 
 
