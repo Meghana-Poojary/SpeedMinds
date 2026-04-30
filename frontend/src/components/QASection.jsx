@@ -89,7 +89,10 @@ export function QASection({ onQuestionSubmit, qaHistory, isGlobalLoading }) {
                   <div className="bg-gray-100 rounded-lg p-3 max-w-[85%] ml-2">
                     {/* Display answer, or use a placeholder while waiting */}
                     {qa.answer && qa.answer !== '...' ? (
-                      <p className="text-gray-800">{qa.answer}</p>
+                      <p className="text-gray-800" dangerouslySetInnerHTML={{ __html: qa.answer
+                        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                      }} />
                     ) : (
                       <div className="flex space-x-1">
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
