@@ -39,11 +39,18 @@ Thumbs.db
 *.swp
 
 # --- React frontend ---
-client/node_modules/
-client/build/
-client/dist/
-client/.env
-client/.DS_Store
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.env
+frontend/.DS_Store
+
+# --- Backend ---
+backend/node_modules/
+backend/build/
+backend/dist/
+backend/.env
+backend/.DS_Store
 
 # --- Dependencies cache ---
 .npm/
